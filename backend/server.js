@@ -12,10 +12,13 @@ const PORT = process.env.PORT || 3001;
 // --- Middleware ---
 app.use(cors());
 app.use(express.json());
-// Serve the static files from the React app
-app.use(express.static(path.join(__dirname, '../build')));
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// In production, serve the static files from the React app build
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../build')));
+}
 
 
 // --- File Upload Configuration (Multer) ---
@@ -225,11 +228,22 @@ app.post('/api/admin/update-status', async (req, res) => {
 });
 
 // --- Fallback for React Router ---
-// This serves the React app for any request that doesn't match an API route
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build/index.html'));
+// In production, serve the React app for any request that doesn't match an API route
+if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../build/index.html'));
+    });
+}
+
+const server = app.listen(PORT, () => {
+    console.log(`Backend server listening at http://localhost:${PORT}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend server listening at http://localhost:${PORT}`);
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Another server may be running.`);
+        process.exit(1);
+    }
+    console.error('Server error:', err);
+    process.exit(1);
 });

@@ -1,0 +1,14 @@
+# Node
+node_modules/
+backend/node_modules/
+
+# Env files
+.env
+.env.local
+
+# build
+dist/
+build/
+
+# OS
+.DS_Store
