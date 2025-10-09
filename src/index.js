@@ -8,8 +8,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-```eof
-
-5.  Scroll to the bottom and click the green **"Commit new file"** button.
-
-Let me know when you're ready for the next file.
